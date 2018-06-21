@@ -7,13 +7,10 @@ app.config(function($routeProvider) {
     .when('/home', {
       templateUrl: 'app/components/home/homeView.html'
     })
-    .when('/test', {
-      templateUrl: 'app/components/test/testView.html'
+    .when('/dashboard', {
+      templateUrl: 'app/components/dashboard/dashboardView.html'
     })
-    .when('/api', {
-      templateUrl: 'app/components/api/apiView.html'
-    }).
-  otherwise({
-    redirectTo: '/home'
-  });
+    .otherwise({
+      redirectTo: '/home'
+    });
 });

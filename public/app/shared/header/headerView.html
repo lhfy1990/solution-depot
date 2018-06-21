@@ -1,0 +1,86 @@
+<div class="hero is-info" ng-controller="headerController as headerCtrl" ng-class="{'is-fullheight': headerCtrl.getPath()==='/home'}">
+    <div class="hero-head">
+        <header class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="#">
+                        <figure class="image is-32x32">
+                            <img src="assets/img/favicon.png" alt="Logo" class="is-inverted">
+                        </figure>
+                        Solution Depot
+                    </a>
+                    <span class="navbar-burger burger" ng-click="headerCtrl.toggle_burger()" ng-class="{'is-active': headerCtrl.is_active_burger}">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </div>
+                <div class="navbar-menu" ng-class="{'is-active': headerCtrl.is_active_burger}">
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="#!home" ng-class="{'is-active':headerCtrl.getPath()==='/home'}">
+                            Home
+                        </a>
+                        <a class="navbar-item" href="#!problems" ng-class="{'is-active':headerCtrl.getPath()==='/problems'}">
+                            Problems
+                        </a>
+                        <a class="navbar-item" href="#!dashboard" ng-class="{'is-active':headerCtrl.getPath()==='/dashboard'}">
+                            Dashboard
+                        </a>
+                        <span class="navbar-item">
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <a class="button is-info is-inverted" ng-click="headerCtrl.signup()">
+                                        <span class="icon">
+                                            <i class="fas fa-user-plus fa-fw"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="control">
+                                    <a class="button is-info is-inverted" ng-click="headerCtrl.signin()">
+                                        <span class="icon">
+                                            <i class="fas fa-sign-in-alt fa-fw"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Modal title</p>
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <!-- Content ... -->
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success">Save changes</button>
+                    <button class="button">Cancel</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <div class="hero-body" ng-if="headerCtrl.getPath()==='/home'">
+        <div class="container">
+            <div class="media">
+                <figure class="media-left image is-128x128">
+                    <img src="assets/img/favicon.png" alt="Logo" class="is-16x16 is-inverted">
+                </figure>
+                <div class="media-conten is-hidden-mobile">
+                    <h1 class="title is-1 is-spaced">Solution Depot</h1>
+                    <h4 class="subtitle is-4">A Depot Storage for Solutions, running on Bulma, FontAwesome, Angular and NodeJS.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-foot" ng-if="headerCtrl.getPath()==='/home'">
+        <div class="container has-text-centered">
+            <p>Contributed by LHFY1990. <a href="https://github.com/lhfy1990/solution-depot" target="_blank"><span class="is-hidden-touch">View Source on Github</span><span class="icon"><i class="fab fa-github fa-fw"></i></span></a></p>
+        </div>
+    </div>
+</div>

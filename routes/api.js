@@ -1,10 +1,20 @@
 var express = require('express');
+var _ = require('lodash');
+var mongoose = require('mongoose');
+
+var userModel = mongoose.model('User');
+
+var router_users = require('./apis/users.js');
+var router_notebooks = require('./apis/notebooks.js');
+var router_notes = require('./apis/notes.js');
+var router_problems = require('./apis/problems.js');
+var router_solutions = require('./apis/solutions.js');
 
 // api
 var router = express.Router();
 // middleware to avoid router from stopping halfway
-router.use(function(req, res, next){
-    next();
+router.use(function(req, res, next) {
+  next();
 });
 router.get('/',
   function(req, res) {
@@ -12,94 +22,79 @@ router.get('/',
       message: "hello, RESTful!"
     });
   });
-router.route('/objects')
-  .get(function(req, res){
-    // query: /api/objects/?property=textValue&propertyarray=textValue0&propertyarray=textValue1
-    var query = req.query;
-    var objects = [];
-    // if (query.isInvalid) 400 BAD REQUEST
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    var statusCode = 200; // 200 OK, no matter result is empty or not
-    res.status(statusCode);
-    res.json(objects);
+// functions
+router.route('/signin')
+  .get(function(req, res) {
+    res.status(405);
+    res.json();
   })
-  .post(function(req, res){
+  .post(function(req, res) {
     var body = req.body;
-    var object = {};
-    // if (body.isInvalid) 400 BAD REQUEST
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    // if (body.isConflict) 409 CONFLICT
-    var statusCode = 201; // 201 CREATED
-    res.status(statusCode);
-    res.json(object); // or requrn object identifier
+    userModel.findById(body._id).populate({ path: 'notebook' }).populate({ path: 'problems', populate: { path: 'problem' } }).exec((err, user) => {
+      if (err) {
+        res.status(400);
+        res.json(err);
+      } else if (_.isNil(user)) {
+        res.status(401);
+        res.json({
+          code: "Bad Request",
+          message: "Username is not found."
+        });
+      } else if (body.password !== user.password) {
+        res.status(401);
+        res.json({
+          code: "Unauthorized",
+          message: "Username and password does not match"
+        });
+      } else {
+        res.status(200);
+        let user_secure = JSON.parse(JSON.stringify(user));
+        delete user_secure.password;
+        res.cookie('idUser', user_secure._id);
+        res.json(user_secure);
+      }
+    });
   })
-  .put(function(req, res){
-    // not allowed, unless you want to update/replace every resource in the entire collection
-    var statusCode = 405; // 405 METHOD NOT ALLOWED
-    res.status(statusCode);
+  .put(function(req, res) {
+    res.status(405);
     res.json();
   })
-  .patch(function(req, res){
-    // not allowed, unless you want to update/modify every resource in the entire collection
-    var statusCode = 405; // 405 METHOD NOT ALLOWED
-    res.status(statusCode);
-    res.json();
-  })
-  .delete(function(req, res){
-    // not allowed, unless you want to delete the whole collection—not often desirable
-    var statusCode = 405; // 405 METHOD NOT ALLOWED
-    res.status(statusCode);
+  .delete(function(req, res) {
+    res.status(405);
     res.json();
   });
-router.route('/objects/:objectId')
-  .get(function(req, res){
-    var objectId = req.params.objectId;
-    var object = {};
-    // if (objectId.isNotFound) 404 NOT FOUND
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    var statusCode = 200; // 200 OK
-    res.status(statusCode);
-    res.json(object);
-  })
-  .post(function(req, res){
-    // not allowed
-    var statusCode = 405; // 405 METHOD NOT ALLOWED
-    res.status(statusCode);
+router.route('/signup')
+  .get(function(req, res) {
+    res.status(405);
     res.json();
   })
-  .put(function(req, res){
-    var objectId = req.params.objectId;
+  .post(function(req, res) {
     var body = req.body;
-    // if (body.isInvalid) 400 BAD REQUEST
-    // if (objectId.isNotFound) 404 NOT FOUND
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    var statusCode = 204; // 204 NO CONTENT, indicating the object has been replaced by entire object.
-    res.status(statusCode);
+    userModel.create(body, (err, user) => {
+      if (err) {
+        res.status(400);
+        res.json(err);
+      } else {
+        let user_secure = JSON.parse(JSON.stringify(user));
+        delete user_secure.password;
+        res.status(201);
+        res.cookie('idUser', user_secure._id);
+        res.json(user_secure);
+      }
+    });
+  })
+  .put(function(req, res) {
+    res.status(405);
     res.json();
   })
-  .patch(function(req, res){
-    var objectId = req.params.objectId;
-    var body = req.body;
-    // if (body.isInvalid) 400 BAD REQUEST
-    // if (objectId.isNotFound) 404 NOT FOUND
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    var statusCode = 204; // 204 NO CONTENT, indicating the object has been modified on specific properties.
-    res.status(statusCode);
-    res.json();
-  })
-  .delete(function(req, res){
-    var objectId = req.params.objectId;
-    // if (objectId.isNotFound) 404 NOT FOUND
-    // if (isNoAuthIntormation) 401 UNAUTHORIZED
-    // if (isNoRights) 403 FORBIDDEN
-    var statusCode = 204; // 204 NO CONTENT, indicating the object has been deleted.
-    res.status(statusCode);
+  .delete(function(req, res) {
+    res.status(405);
     res.json();
   });
+router.use('/users', router_users);
+router.use('/notebooks', router_notebooks);
+router.use('/notes', router_notes);
+router.use('/problems', router_problems);
+router.use('/solutions', router_solutions);
 
-  module.exports = router;
+module.exports = router;

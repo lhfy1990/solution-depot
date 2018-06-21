@@ -1,1 +1,3 @@
-
+[submodule "ng-app"]
+    path = ng-app
+    url = git@github.com:lhfy1990/solution-depot-ng-app.git

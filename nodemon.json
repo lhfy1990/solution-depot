@@ -1,0 +1,9 @@
+{
+  "ignore": [
+    "public",
+    "node_modules/**/node_modules",
+    "ng-app"
+  ],
+  "verbose": true,
+  "ext": "js,json"
+}

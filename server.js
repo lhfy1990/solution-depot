@@ -16,7 +16,7 @@ app.use(cookieParser());
 var port = process.env.PORT || 8080;
 
 // mongoose.set('debug', true);
-var mongodb = 'mongodb://localhost/solution-depot';
+var mongodb = 'mongodb://admin:admin@localhost/solution-depot';
 // var mongodb = 'mongodb://user:pass@mongodb/app';
 mongoose.connect(mongodb, { autoIndex: false });
 var db = mongoose.connection;
